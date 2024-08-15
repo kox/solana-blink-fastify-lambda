@@ -1,0 +1,8 @@
+{
+    "rules": [
+        {
+            "pathPattern": "/buymeacoffee/**",
+            "apiPath": "http://www.cognis.es/api/actions/buymeacoffee/**"
+        }
+    ]
+}
