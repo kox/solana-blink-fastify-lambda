@@ -1,21 +1,30 @@
 [build]
+  # This will be run the site build
+  command = "pnpm run build:functions"
+  # This is the directory is publishing to netlify's CDN
+  # and this is directory of your front of your app
+  # publish = "build"
+  # functions build directory
+  functions = "functions-build" # always appends `-build` folder to your `functions` folder for builds
+
+# [build]
 # This will be run the site build
 #command = "npm run build:functions"
-command = "pnpm run build"
+# command = "pnpm run build"
 # This is the directory is publishing to netlify's CDN
 # and this is directory of your front of your app
 # publish = "build"
 # functions build directory
 # functions = "functions-build" # always appends `-build` folder to your `functions` folder for builds
-[functions]
+# [functions]
 # Directory with serverless functions, including background
 # functions, to deploy. This is relative to the base directory
 # if one has been set, or the root directory if
 # a base hasn’t been set.
-directory = "functions/"
+# directory = "functions/"
 
 # Specifies \`esbuild\` for functions bundling, esbuild is the default for TS
-node_bundler = "esbuild"
+# node_bundler = "esbuild"
 
-[functions."api*"]
+#[functions."api*"]
 # Apply settings to any functions with a name beginning with "api"
