@@ -2,14 +2,15 @@
   "name": "fastify-lambda-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/functions/server.js",
+  "type": "module",
   "engines": {
     "node": ">=6.0.0"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/main.js",
-    "dev": "ts-node-dev ./src/main.ts | pino-pretty --colorize",
+    "start": "node dist/functions/server.js",
+    "dev": "ts-node-dev ./src/functions/server.ts | pino-pretty --colorize",
     "update:packages": "npx npm-check-updates -u",
     "lint": "eslint '{src,test}/**/*.ts'",
     "lint:fix": "eslint --fix '{src,test}/**/*.ts'",
@@ -41,6 +42,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@netlify/functions": "^2.8.1",
     "@types/eslint": "9.6.0",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/eslint-plugin-prettier": "3.1.3",

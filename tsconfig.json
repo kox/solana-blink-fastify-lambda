@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-      "lib": ["es2020"],
-      "module": "commonjs",
-      "target": "es2020",
+      "module": "ESNext",
+      "target": "ESNext",
+      "moduleDetection": "auto",
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
       "incremental": true,
       "noImplicitAny": false,
-      "moduleResolution": "node",
+      "moduleResolution": "Bundler",
       "resolveJsonModule": true,
       "sourceMap": true,
       "outDir": "./dist",
