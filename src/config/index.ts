@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import Joi from 'joi';
-import path from 'path';
 
 export interface IConfig {
   host: string;
@@ -11,17 +10,9 @@ export interface IConfig {
   solanaRpc: string;
 }
 
+dotenv.config();
+
 export function loadConfig(): IConfig {
-  const envPath = path.join(__dirname, '..', '..', '.env');
-
-  const result = dotenv.config({ path: envPath });
-
-  if (result.error) {
-    throw new Error(
-      `Failed to load .env file from path ${envPath}: ${result.error.message}`,
-    );
-  }
-
   const schema = Joi.object({
     NODE_ENV: Joi.string()
       .valid('development', 'testing', 'production')
