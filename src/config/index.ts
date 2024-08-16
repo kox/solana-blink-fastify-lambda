@@ -8,6 +8,7 @@ export interface IConfig {
   env: string;
   logLevel: string;
   donatePublickey: string;
+  solanaRpc: string;
 }
 
 export function loadConfig(): IConfig {
@@ -31,6 +32,7 @@ export function loadConfig(): IConfig {
     API_HOST: Joi.string().required(),
     API_PORT: Joi.string().required(),
     DONATE_PUBLICKEY: Joi.string().required(),
+    SOLANA_RPC: Joi.string().required(),
   }).unknown(true);
 
   const { error } = schema.validate(process.env, { abortEarly: false });
@@ -45,5 +47,6 @@ export function loadConfig(): IConfig {
     env: process.env.NODE_ENV,
     logLevel: process.env.LOG_LEVEL,
     donatePublickey: process.env.DONATE_PUBLICKEY,
+    solanaRpc: process.env.SOLANA_RPC,
   };
 }

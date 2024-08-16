@@ -7,15 +7,13 @@ import {
   createPostResponse,
 } from '@solana/actions';
 import {
-  clusterApiUrl,
-  ComputeBudgetProgram,
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,
+  TransactionMessage,
+  VersionedTransaction,
 } from '@solana/web3.js';
-import BN from 'bn.js';
 
 import { STANDARD } from '../constants';
 import { actionData } from '../blinks/buyMeACoffee';
@@ -98,27 +96,36 @@ async function buyMeACoffeeRouter(fastify: FastifyInstance) {
             });
         }
 
-        const transaction = new Transaction();
+        const connection = new Connection(config.solanaRpc);
 
-        transaction.add(
-          ComputeBudgetProgram.setComputeUnitPrice({
-            microLamports: 1000,
-          }),
-          SystemProgram.transfer({
-            fromPubkey: account,
-            // Account that will receive transferred lamports
-            toPubkey: new PublicKey(config.donatePublickey),
-            // Amount of lamports to transfer
-            lamports: amount,
-          }),
+        // ensure the receiving account will be rent exempt
+        const minimumBalance =
+          await connection.getMinimumBalanceForRentExemption(
+            0, // note: simple accounts that just store native SOL have `0` bytes of data
+          );
+
+        if (amount * LAMPORTS_PER_SOL < minimumBalance) {
+          throw `The destination account may not be rent exempt`;
+        }
+
+        const transferSolInstruction = SystemProgram.transfer({
+          fromPubkey: account,
+          // Account that will receive transferred lamports
+          toPubkey: new PublicKey(config.donatePublickey),
+          // Amount of lamports to transfer
+          lamports: amount,
+        });
+
+        const { blockhash } = await connection.getLatestBlockhash();
+
+        // versioned transactions are supported
+        const transaction = new VersionedTransaction(
+          new TransactionMessage({
+            payerKey: account,
+            recentBlockhash: blockhash,
+            instructions: [transferSolInstruction],
+          }).compileToV0Message(),
         );
-
-        transaction.feePayer = account;
-
-        const connection = new Connection(clusterApiUrl('devnet'));
-        transaction.recentBlockhash = (
-          await connection.getLatestBlockhash()
-        ).blockhash;
 
         const payload: ActionPostResponse = await createPostResponse({
           fields: {
@@ -134,7 +141,6 @@ async function buyMeACoffeeRouter(fastify: FastifyInstance) {
           .send(payload);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err: unknown) {
-        console.log(err);
         return reply
           .code(STANDARD.ERROR.statusCode)
           .headers(ACTIONS_CORS_HEADERS as Record<string, string>)
